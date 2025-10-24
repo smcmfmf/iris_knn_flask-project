@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iris KNN 분류기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 1. 기본 및 폰트 설정 */
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            /* 배경 그라데이션 추가 */
+            background: linear-gradient(135deg, #e0f2f7 0%, #d4eaf7 100%); /* 산뜻한 파스텔 블루 그라데이션 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden; /* 애니메이션 오버플로우 숨김 */
+        }
+
+        /* 2. 메인 컨테이너 */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px; /* 패딩 유지 */
+            border-radius: 15px; /* 둥근 모서리 증가 */
+            /* 그림자 강화 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease-in-out; /* hover 애니메이션 추가 */
+        }
+        
+        /* 컨테이너 hover 시 살짝 떠오르는 효과 */
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 30px;
+            /* 제목에 부드러운 애니메이션 추가 */
+            animation: fadeInDown 1s ease-out forwards;
+        }
+
+        /* 3. 폼 스타일 */
+        form {
+            margin-bottom: 20px;
+        }
+
+        form div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: inline-block;
+            width: 130px;
+            text-align: right;
+            margin-right: 15px;
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 120px;
+            padding: 10px 12px;
+            border: 1px solid #dfe4ea;
+            border-radius: 8px; /* 둥근 모서리 증가 */
+            font-size: 15px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* transition 시간 조정 */
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #5dade2; /* 더 밝은 파란색 */
+            box-shadow: 0 0 0 4px rgba(93, 173, 226, 0.25); /* 그림자 효과 강화 */
+        }
+
+        /* 4. 버튼 스타일 */
+        button {
+            background: linear-gradient(135deg, #5dade2, #3498db); /* 그라데이션 색상 변경 */
+            color: white;
+            padding: 12px 28px; /* 패딩 증가 */
+            border: none;
+            border-radius: 8px; /* 둥근 모서리 증가 */
+            cursor: pointer;
+            font-size: 18px; /* 폰트 크기 증가 */
+            font-weight: 600; /* 폰트 두께 증가 */
+            transition: all 0.3s ease-out; /* transition 시간 조정 */
+            box-shadow: 0 6px 18px rgba(52, 152, 219, 0.4);
+            letter-spacing: 0.5px; /* 자간 추가 */
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.02); /* 더 크게 떠오르는 효과 */
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+            background: linear-gradient(135deg, #3498db, #5dade2); /* 클릭 시 색상 반전 */
+        }
+
+        /* 5. 결과 섹션 */
+        .result {
+            margin-top: 20px; /* 여백 증가 */
+            padding: 20px; /* 패딩 증가 */
+            background-color: #eaf7fb; /* 결과 박스 배경색 변경 */
+            border-radius: 12px;
+            border: 1px solid #cceeff; /* 테두리 색상 변경 */
+            /* 결과 박스 애니메이션 추가 */
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0; /* 초기 투명 */
+            transform: translateY(20px); /* 초기 위치 */
+        }
+
+        .result h2 {
+            color: #2c3e50;
+            font-size: 24px; /* 폰트 크기 증가 */
+            margin-bottom: 20px;
+        }
+
+        .result img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px; /* 이미지 둥근 모서리 증가 */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* 그림자 강화 */
+            margin-top: 15px; /* 여백 증가 */
+            /* 이미지 애니메이션 추가 */
+            animation: imgScaleIn 0.8s ease-out 0.3s forwards; /* 딜레이 추가 */
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        /* --- [설명] 스타일 추가 --- */
+        .result p.description {
+            font-size: 16px; /* 폰트 크기 증가 */
+            color: #34495e;
+            line-height: 1.8; /* 줄 간격 증가 */
+            margin-top: 25px; /* 여백 증가 */
+            text-align: left;
+            padding: 0 10px; /* 좌우 패딩 추가 */
+        }
+        /* --- -------------------- --- */
+
+        /* 키프레임 애니메이션 정의 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes imgScaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>붓꽃 품종 예측 (KNN) 🌼</h1>
+        <form method="post">
+            <div>
+                <label>Sepal Length:</label>
+                <input type="number" step="0.01" name="sepal_length" required><br><br>
+            </div>
+            <div>
+                <label>Sepal Width:</label>
+                <input type="number" step="0.01" name="sepal_width" required><br><br>
+            </div>
+            <div>
+                <label>Petal Length:</label>
+                <input type="number" step="0.01" name="petal_length" required><br><br>
+            </div>
+            <div>
+                <label>Petal Width:</label>
+                <input type="number" step="0.01" name="petal_width" required><br><br>
+            </div>
+            <button type="submit">예측</button>
+        </form>
+
+        
+        {% if prediction %}
+        <div class="result">
+            <h2>예측 결과: {{ prediction }}</h2>
+            <img src="{{ image_url }}" alt="Image of {{ prediction }}">
+            
+            <p class="description">{{ description }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
