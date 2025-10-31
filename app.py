@@ -12,7 +12,6 @@ except FileNotFoundError:
     print("먼저 제공해주신 첫 번째 Python 스크립트를 실행하여 모델을 생성하세요.")
     exit()
 
-# 2. 붓꽃 정보에 'description' (설명) 추가
 iris_info = {
     0: {
         'name': 'Setosa (부채붓꽃)',
@@ -36,7 +35,7 @@ iris_info = {
 def index():
     prediction_name = None
     prediction_img_url = None
-    prediction_desc = None  # 설명을 담을 변수 추가
+    prediction_desc = None
 
     if request.method == 'POST':
         try:
@@ -49,22 +48,19 @@ def index():
 
             prediction_index = model.predict(features)[0] 
             
-            # 딕셔너리에서 모든 정보(이름, 이미지, 설명)를 가져옴
             info = iris_info[prediction_index]
             prediction_name = info['name']
             prediction_img_url = url_for('static', filename=info['img_path'])
-            prediction_desc = info['description'] # 설명 변수에 할당
+            prediction_desc = info['description']
 
         except Exception as e:
             print(f"예측 중 오류 발생: {e}")
             prediction_name = "오류 발생"
 
-    # HTML 템플릿에 'description' 변수도 함께 전달
     return render_template('index.html', 
                            prediction=prediction_name, 
                            image_url=prediction_img_url,
                            description=prediction_desc)
 
-# 4. 서버 실행
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

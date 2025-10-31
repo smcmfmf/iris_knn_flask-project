@@ -6,7 +6,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ✨ 기본 설정 */
         * {
             box-sizing: border-box;
         }
@@ -23,7 +22,6 @@
             overflow: hidden;
         }
 
-        /* ✨ Glassmorphism 컨테이너 */
         .container {
             width: 95%;
             max-width: 480px;
@@ -46,7 +44,6 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* ✨ 입력 폼 */
         form {
             display: flex;
             flex-direction: column;
@@ -81,8 +78,7 @@
             background-color: rgba(255, 255, 255, 0.9);
         }
 
-        /* ✨ 버튼 스타일 */
-        button, a.button-style { /* button과 a.button-style에 동시에 적용 */
+        button, a.button-style {
             margin-top: 10px;
             background: linear-gradient(135deg, #74b9ff, #a29bfe);
             color: white;
@@ -95,10 +91,9 @@
             box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
             transition: all 0.3s ease;
             
-            /* <a> 태그를 버튼처럼 보이게 하는 추가 속성 */
-            text-decoration: none; /* 밑줄 제거 */
-            display: inline-block; /* 패딩 및 마진 적용을 위해 인라인 블록으로 설정 */
-            text-align: center; /* 텍스트 중앙 정렬 */
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         button:hover, a.button-style:hover {
@@ -111,7 +106,6 @@
             box-shadow: 0 4px 10px rgba(116, 185, 255, 0.4);
         }
 
-        /* ✨ 결과 섹션 */
         .result {
             margin-top: 25px;
             padding: 25px;
@@ -120,11 +114,11 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
             animation: slideUp 0.6s ease-out;
-            display: none; /* 기본은 숨김 */
+            display: none;
         }
 
         .result.active {
-            display: block; /* 결과 표시 시 활성화 */
+            display: block;
         }
 
         .result h2 {
@@ -149,7 +143,6 @@
             margin-top: 20px;
         }
 
-        /* ✨ 애니메이션 */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.96); }
             to { opacity: 1; transform: scale(1); }
@@ -165,12 +158,11 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* ✨ 반응형 디자인 */
         @media (max-width: 480px) {
             h1 {
                 font-size: 22px;
             }
-            button, a.button-style { /* 반응형에도 함께 적용 */
+            button, a.button-style {
                 font-size: 16px;
                 padding: 12px 24px;
             }
@@ -220,7 +212,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById("inputForm");
             const result = document.getElementById("resultSection");
-            const resetBtn = document.getElementById("resetBtn"); // 이 변수는 이제 JavaScript 로직에서 직접 사용되지 않습니다.
+            const resetBtn = document.getElementById("resetBtn");
 
             const predictionValue = "{{ prediction }}";
             
@@ -230,10 +222,6 @@
                 form.style.display = "none";
                 result.classList.add("active");
             } 
-            
-            // "다시 입력하기" 버튼은 이제 단순히 href="/" 링크로 동작하므로
-            // 별도의 JavaScript 이벤트 리스너가 필요하지 않습니다.
-            // form.reset()은 페이지 이동 시 자동으로 리셋됩니다.
         });
     </script>
 </body>
